@@ -1,0 +1,131 @@
+#include "head.h"
+
+/**
+ * Loads the parameters of the requested spring contained in
+ * 
+ * data/spring_X.txt
+ * 
+ * where X is the number of the spring (spring_id). If the file 
+ * does not exist, the function should return -1. Otherwise, it
+ * should return 0.
+*/
+int loadParameters(int spring_id, Parameters *parameters) {
+    
+    char name[20],line[100];
+    FILE *fin;
+
+    sprintf(name,"data/spring_%d.txt",spring_id);
+    fin=fopen(name,"r");
+
+    if (fin==NULL)  return -1;
+
+    while (!feof(fin)) { // Recorre cada línea hasta el final del fichero. // memset(line,0,sizeof(line));
+        
+        fgets(line,sizeof(line),fin); // Guarda la linea en line
+        char *token = strtok(line," "); // El puntero token se posiciona donde aparece el primer espacio
+
+        if (token != NULL) { // Se comprueba que ha leido al menos un espacio
+
+            if (strcmp(token,"mass") == 0)
+            { //Se compara el valor del token con el del nombre de la variable
+                //strtok para encontrar el siguiente espacio (final de la frase) tomando asi el valor de la variable en char y se transforma a double con atof
+                parameters->mass=atof(strtok(NULL," "));      
+
+            } else if (strcmp(token,"k")==0) 
+            {
+
+                parameters->k=atof(strtok(NULL," "));
+            
+            } else if (strcmp(token,"natural_length")==0) 
+            {
+
+                parameters->natural_length=atof(strtok(NULL," "));
+            
+            } else if (strcmp(token,"anchor_position")==0) 
+            {
+
+                parameters->anchor_position=atof(strtok(NULL," "));
+            
+            } else if (strcmp(token,"h")==0) 
+            {
+
+                parameters->h=atof(strtok(NULL," "));
+            
+            } else if (strcmp(token,"t_max")==0) 
+            {
+
+                parameters->t_max=atof(strtok(NULL," "));
+            
+            } else if (strcmp(token,"x0")==0) 
+            {
+
+                parameters->x0=atof(strtok(NULL," "));
+            
+            } else if (strcmp(token,"v0")==0) 
+            {
+
+                parameters->v0=atof(strtok(NULL," "));
+            }
+        }
+    }
+
+    fclose(fin);
+
+    return 0;
+}
+
+/**
+ * Creates a file in the results folder with the name
+ * 
+ * results/evolution_ALGORITHM.txt
+ * 
+ * where ALGORITHM should be EULER or VERLET depending on the algorithm used. Note
+ * that you can get this information using #ifdef.
+ * 
+ * It also writes in text format a single line that will act as header:
+ * #t Ec Ep Em x v
+*/
+void resetFile() {
+
+    FILE *fout;
+
+#ifdef EULER
+    fout=fopen("results/evolution_EULER.txt","w");  
+#endif
+
+#ifdef VERLET
+    fout=fopen("results/evolution_VERLET.txt","w");  
+#endif
+
+   fprintf(fout,"#t Ec Ep Em x v\n"); 
+
+   fclose(fout);
+
+}
+
+/**
+ * Appends the state of the system into the file created with resetFile(). There
+ * should be 6 values separated by a single whitespace in each line: time, 
+ * kinetic energy, potential energy, mechanical energy, position, velocity. 
+*/
+void writeEvolution(Parameters p, double x, double v, double time) {
+
+    FILE *fout;
+
+#ifdef EULER
+    fout=fopen("results/evolution_EULER.txt","a");  
+#endif
+
+#ifdef VERLET
+    fout=fopen("results/evolution_VERLET.txt","a");  
+#endif
+
+    if (fout==NULL) printf("ERROR no se pudo abrir el fichero");
+    else
+    {
+        fprintf(fout,"%lf %lf %lf %lf %lf %lf\n",time,kineticEnergy(p,v),potentialEnergy(p,x),mechanicalEnergy(p,x,v),x,v); 
+    }
+ 
+    fclose(fout);
+
+}
