@@ -1,0 +1,59 @@
+#include "head.h"
+
+/**
+ * Calculates the force on the spring at the given position
+*/
+double forceSpring(Parameters p, double x) {
+    return -p.k*(x-p.natural_length-p.anchor_position);
+}
+
+/**
+ * Calculates de potential energy of the system
+*/
+double potentialEnergy(Parameters p, double x) {
+
+    //printf("%lf",0.5*p.k*(x-p.anchor_position-p.natural_length)*(x-p.anchor_position-p.natural_length));
+    return 0.5*p.k*(x-p.anchor_position-p.natural_length)*(x-p.anchor_position-p.natural_length);
+
+}
+
+/**
+ * Calculates the kinetic energy of the system
+*/
+double kineticEnergy(Parameters p, double v) {
+
+    //printf("%lf",0.5*p.mass*v*v);
+    return 0.5*p.mass*v*v;
+    
+}
+
+/**
+ * Calculates the mechanical energy of the system
+*/
+double mechanicalEnergy(Parameters p, double x, double v) {
+    return potentialEnergy(p,x)+kineticEnergy(p,v);
+}
+
+/**
+ * Updates the value of the position and the velocity using Euler's algorithm
+ */
+void evolutionEuler(Parameters p, double *x, double *v) { 
+
+    double F;
+
+    F=forceSpring(p,*x);
+    *x+=*v*p.h;
+    *v+=p.h*F/p.mass;
+    
+}
+
+/**
+ * Updates the value of the position and the velocity using Verlet's algorithm
+ */
+void evolutionVerlet(Parameters p, double *x, double *v) {
+
+    *v+=p.h*0.5*forceSpring(p,*x)/p.mass;
+    *x+=*v*p.h;
+    *v+=p.h*0.5*forceSpring(p,*x)/p.mass;
+
+}
