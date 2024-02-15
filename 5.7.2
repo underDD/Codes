@@ -1,0 +1,163 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <time.h>
+
+#define NormRAnu (2.3283063671E-10F)
+#define N_DATA 20000
+#define fran rand()/((double)RAND_MAX)
+#define N_Inter 200
+
+double parisirapuano(void);
+void Histograma(double *I,double *H,double *delta,double *mx,double *mn);
+double frandom(double xmin, double xmax);
+void minicambios(double xmin,double xmax,double *x);
+double prob(double x);
+
+double A,C;
+double a,b;
+
+int main()
+{
+    int i;
+    double x,y;
+    double coc;
+    double xmin,xmax;
+    double delta,max,min,suma;
+    double DATA[N_DATA],H[N_Inter];
+    FILE *f=fopen("altura.txt","w");
+    srand(time(NULL));
+
+    printf("patata\n");
+    for(i=0;i<N_DATA;i++) DATA[i]=0;
+
+    //A=20;
+    xmin=0.0;
+    xmax=10.0;
+    C=6/(2*a*pow(xmax,3)+3*b*pow(xmax,2));
+    suma=0.0;
+    a=-1;
+    b=2;
+
+    if(f==NULL) {exit(1); printf("ERROR al abrir el fichero");}
+
+    for(i=0;i<N_DATA;i++)
+    {
+        do{
+            minicambios(xmin,xmax,&x);
+            y=2*a*parisirapuano();
+            DATA[i]=x;
+        }while(y>prob(x));
+
+    }
+
+    Histograma(DATA,H,&delta,&max,&min);
+
+    for(i=0;i<N_Inter;i++)
+    {
+        fprintf(f,"%lf\t%lf\n",i*delta+min,H[i]);
+        suma+=delta*H[i];
+    }
+
+    printf("%lf",suma);
+
+    fclose(f);
+
+}
+
+double parisirapuano(void)
+{
+
+    unsigned int irr[256];
+    unsigned int ir1;
+    unsigned char ind_ran,ig1,ig2,ig3;
+    int i;
+
+    for(i=0;i<256;i++)
+        irr[i]=(rand()<<16)+rand();
+
+    ig1=ind_ran-24;
+    ig2=ind_ran-55;
+    ig3=ind_ran-61;
+    irr[ind_ran]=irr[ig1]+irr[ig2];
+    ir1=(irr[ind_ran]^irr[ig3]);
+    ind_ran++;
+
+    return ir1*NormRAnu;
+
+}
+
+/*
+    Generador plano en el intervalor [a.b], malo por correlaciones
+*/
+double frandom(double xmin, double xmax)
+{
+    return a+(b-a)*fran;
+}
+
+/*
+    Genera un histograma
+*/
+void Histograma(double *I,double *H,double *delta,double *mx,double *mn)
+{
+
+    int i,j;
+    double max,min,d,norma;
+
+    max=-100000000;
+    min=+100000000;
+
+    for(i=0;i<N_Inter;i++) H[i]=0;
+
+    for(i=0;i<N_DATA;i++)
+    {
+        if (I[i]>max) max=I[i];
+        if (I[i]<min) min=I[i];
+    }
+
+    d=(max-min)/N_Inter;
+    norma=1.0/(N_DATA*d);
+
+    for(i=0;i<N_DATA;i++)
+    {
+        j=(I[i]-min)/d;
+        if (j==N_Inter) j=j-1;
+        H[j]++;
+        //printf("%d\n",j);
+    }
+
+    for(i=0;i<N_Inter;i++)
+        H[i]*=norma;
+
+    *delta=d;
+    *mx=max;
+    *mn=min;
+
+}
+
+
+/*
+    Genera una x por el método de los pequeños cambios;
+*/
+void minicambios(double xmin, double xmax,double *x)
+{
+
+    double eps;
+
+    eps=b/10;
+
+    *x+=-eps+2*eps*parisirapuano();
+
+    if(*x>b) *x-=b-a;
+    if(*x<a) *x+=b-a;
+
+}
+
+/*
+    Calcula el cociente para una distribucion gaussiana
+*/
+double prob(double x)
+{
+    return 1/(x*x+a*a);
+}
+
