@@ -31,13 +31,11 @@ int main()
     printf("patata\n");
     for(i=0;i<N_DATA;i++) DATA[i]=0;
 
-    //A=20;
+    A=20;
     xmin=0.0;
     xmax=10.0;
-    C=6/(2*a*pow(xmax,3)+3*b*pow(xmax,2));
+    C=sqrt(A/2/arcsin(1))
     suma=0.0;
-    a=-1;
-    b=2;
 
     if(f==NULL) {exit(1); printf("ERROR al abrir el fichero");}
 
@@ -45,7 +43,7 @@ int main()
     {
         do{
             minicambios(xmin,xmax,&x);
-            y=2*a*parisirapuano();
+            y=A*parisirapuano();
             DATA[i]=x;
         }while(y>prob(x));
 
@@ -158,6 +156,6 @@ void minicambios(double xmin, double xmax,double *x)
 */
 double prob(double x)
 {
-    return 1/(x*x+a*a);
+    return C*exp(-A*x*x);
 }
 
