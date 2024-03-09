@@ -3,8 +3,8 @@
 #include <math.h>
 
 #define N 100
-#define Niter 100
-#define fran rand()/((double)RAND_MAX+1)
+#define Niter 1000
+double f(double x);
 
 int main(){
 
@@ -18,19 +18,23 @@ int main(){
         printf("x_0=%lf --> ",x);
         for(int j=0;j<Niter;j++)
         {
-            x=cos(x);
+            x=f(x);
         }
         printf("%lf\n",x);
     }
 
-
-
-
     return 0;
+
 }
 
 
 
 
+double f(double x)
+{
+ 
+    return cos(x);
+
+}
 
 
