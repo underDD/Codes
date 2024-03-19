@@ -1,0 +1,35 @@
+M1.
+
+Se quiere encontrar el autoestado. Tiene dos componentes complejas. (módulo y exponente)
+
+Sigmax*autoestado;
+Sigmay*autoesatdo;
+Sigmaz*autoestado;
+r1^2+r2^2=1;
+Se puede parcialmente el estado.
+Solo tenemos informacion de la diferencia de las dos fases. No se puede determinar por separado.
+
+-------------------------------------------------------- Otra forma
+
+Se puede intentar reproducir el proyector rho_estado=3coords en la esfera de radio 1;
+Tr(rho_esatdo*A)=<A>
+Tr(pho_estado*rho_k), rho_k = proyector a cada subespacio de sigma_k;
+Hay dos coordenadas a determinar, por una ligadura.
+Se puede determinar completamente el proyector. 
+
+-------------------------------------------------------- Otra forma
+
+Hallar el valor esperado de los operadores con los autoestado en forma compleja.
+
+El valor medio de sigmaz es r1^2-r2^2.
+
+Comentar por qu eno se obtiene toda la informacion.
+El proyector es el mismo para cualquier estado que esta en el rayo complejo, psi=lambda*psi.
+
+M2.
+
+Como depende el error del tamaño de la muestra: 1/sqrt(N)??? .
+
+
+
+
